@@ -1,6 +1,7 @@
 import { AssemblyHelper } from "../../engine/AssemblyHelper";
 import { Path } from "../../engine/native/Path";
 import { Logger } from "../../utils/Logger";
+import { Platform } from "../../utils/Platform";
 import { Config } from "../data/Config";
 
 export class CustomBgm {
@@ -13,7 +14,9 @@ export class CustomBgm {
 
         const BgmPlayer = AssemblyHelper.AssemblyCSharp.class("Sonolus.Audio.BgmPlayer");
 
-        // Sonolus.Audio.BgmPlayer Create(string path, long startTime, float bgmTime, float speed, float volume, bool loop, float loopTime, bool isPrecise);
+        // Android: Sonolus.Audio.BgmPlayer Create(string path, long startTime, float bgmTime, float speed, float volume, bool loop, float loopTime, bool isPrecise);
+        // iOS: Sonolus.Audio.BgmPlayer Create(string path, double startTime, float bgmTime, float speed, float volume, bool loop, float loopTime, bool isPrecise);
+        // I have no idea why startTime is double in iOS
         const Create = BgmPlayer.method<Il2Cpp.Object>("Create", 8);
 
         // Why `Interceptor.attach` over `Create.implementation`?
@@ -25,11 +28,16 @@ export class CustomBgm {
         // and we got `access violation accessing` 0x0 on `invokeRaw`
         //
         // In `args` argument we have General Purpose registers (GP)
-        // Floating points arguments passed in SIMD registers and Floating Pointers registers (FP)
+        // Floating points arguments are passed in SIMD/Floating-point registers (FP)
         //
         // Look at the arguments:
+        // Android:
         // str, long, float, float, float, bool, float, bool
         // x0 , x1  , s0   , s1   , s2   , x2  , s3   , x3
+        //
+        // iOS:
+        // str, double, float, float, float, bool, float, bool
+        // x0 , d0    , s1   , s2   , s3   , x1  , s4   , x2
         //
         // From: https://github.com/ARM-software/abi-aa/blob/main/aapcs64/aapcs64.rst#68parameter-passing
         // Floating-point and short vector types are passed in SIMD and Floating-point registers or on the stack; never in general-purpose registers (except when they form part of a small structure that is neither an HFA nor an HVA).
@@ -58,7 +66,11 @@ export class CustomBgm {
                     case "arm64":
                     case "arm":
                         // Or Arm64CpuContext
-                        (this.context as ArmCpuContext).s3 = 0;
+                        if (Platform.isPlatformAndroid()) {
+                            (this.context as ArmCpuContext).s3 = 0;
+                        } else if (Platform.isPlatformIOS()) {
+                            (this.context as ArmCpuContext).s4 = 0;
+                        }
                         break;
                     default:
                         Logger.error("[CustomBgm::CreateHook] Unsupported architecture. How you actually run Sonolus?");
