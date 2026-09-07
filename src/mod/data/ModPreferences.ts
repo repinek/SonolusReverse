@@ -16,5 +16,5 @@ export class ModPreferences {
     static readonly VERSION = process.env.BUILD_VERSION;
     static readonly BUILD = process.env.BUILD_COUNTER;
     static readonly GIT_BRANCH = process.env.BUILD_BRANCH;
-    static readonly FOR_GAME_VERSION = "1.1.3"; // should be hardcoded, script was written only for THIS version
+    static readonly FOR_GAME_VERSION = "1.1.4"; // should be hardcoded, script was written only for THIS version
 }
