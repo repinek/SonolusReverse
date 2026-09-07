@@ -1,15 +1,12 @@
 ### What's Changed
 
-- Update to latest Sonolus `1.1.3` version
-- Add custom UI background music feature (import your own audio)
-- "Select" button in Theme Field now opens the theme picker
-- Add Discord button to the mod and project README
-- Add Vietnamese translation
+- Update to latest Sonolus `1.1.4` version
+- Better support for iOS by [@JexOpy](https://github.com/JexOpy)
 - Other improvements...
 
 ### Supported Game Version for this release
 
-- Sonolus 1.1.3 (Android)
+- Sonolus 1.1.4 (Android)
 
 ### Notes
 
