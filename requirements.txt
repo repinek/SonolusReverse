@@ -1,2 +1,15 @@
+certifi==2026.6.17
+charset-normalizer==3.4.9
+colorama==0.4.6
+fgi @ git+https://github.com/commonuserlol/fgi.git@7687b775b4d6ee441ba45ec10b858f9aa095a6eb
 frida==17.16.4
 frida-tools==14.10.4
+idapro==0.0.10
+idna==3.18
+prompt_toolkit==3.0.52
+Pygments==2.20.0
+requests==2.34.2
+tomli_w==1.2.0
+urllib3==2.7.0
+wcwidth==0.8.2
+websockets==13.1
