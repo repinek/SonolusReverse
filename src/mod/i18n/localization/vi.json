@@ -34,7 +34,7 @@
         },
         "about": {
             "title": "Giới thiệu SonolusReverse",
-            "description": "SonolusReverse - Bản mod miễn phí, mã nguồn mở dành cho Sonolus. Hãy xem GitHub của chúng tôi và để lại ngôi sao nếu bạn thích!\n\nv{0} - {1} ({2})",
+            "description": "SonolusReverse - Bản mod miễn phí, mã nguồn mở dành cho Sonolus. Hãy xem GitHub của chúng tôi và để lại ngôi sao nếu bạn thích!\n\nv{0} - {1} ({2})\nPhiên bản Sonolus: {3}",
             "update_button": "Cập nhật",
             "discord_button": "Discord",
             "github_button": "GitHub",

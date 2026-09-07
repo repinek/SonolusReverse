@@ -34,7 +34,7 @@
         },
         "about": {
             "title": "О SonolusReverse",
-            "description": "SonolusReverse - Бесплатная модификация Sonolus с открытым исходным кодом. Загляните на наш GitHub и поставьте звезду, если вам нравится!\n\nv{0} - {1} ({2})",
+            "description": "SonolusReverse - Бесплатная модификация Sonolus с открытым исходным кодом. Загляните на наш GitHub и поставьте звезду, если вам нравится!\n\nv{0} - {1} ({2})\nВерсия Sonolus: {3}",
             "update_button": "Проверить обновления",
             "discord_button": "Discord",
             "github_button": "GitHub",

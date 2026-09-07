@@ -1,5 +1,6 @@
 import { Application } from "../../../engine/wrappers/Application";
 import { SectionsHook } from "../../../sonolus/routes/SectionsHook";
+import { App } from "../../../sonolus/wrappers/App";
 import { Assets } from "../../../sonolus/wrappers/Assets";
 import { Dep } from "../../../sonolus/wrappers/reactivity/Dep";
 import { BtnField } from "../../../sonolus/wrappers/ui/common/fields/BtnField";
@@ -65,7 +66,7 @@ function githubBtn(): ImgLblBtn {
 export function aboutField(): BtnField {
     return BtnField.new()
         .title(I18n.tRef("ui.about.title"))
-        .description(I18n.tRef("ui.about.description", ModPreferences.VERSION, ModPreferences.HASH, ModPreferences.ENV))
+        .description(I18n.tRef("ui.about.description", ModPreferences.VERSION, ModPreferences.HASH, ModPreferences.ENV, App.semVer))
         .value(Dep.opImplicit(""))
         .btns([updateBtn(), discordBtn(), githubBtn()])
         .validate();
