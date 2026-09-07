@@ -28,8 +28,8 @@ export class Widget extends Il2Cpp.Object {
     }
 
     /** `class.new()` + setPrototypeOf */
-    protected static _new<T extends Widget>(): T {
-        const obj = this.class.new(); // call alloc + il2cpp_object_initialize export
+    protected static _new<T extends Widget>(klass: Il2Cpp.Class = this.class): T {
+        const obj = klass.new(); // call alloc + il2cpp_object_initialize export
         Object.setPrototypeOf(obj, this.prototype);
         (obj as unknown as Record<string, unknown>)._setFields = new Set<string>();
         (obj as unknown as Record<string, unknown>)._requiredFields = [];
