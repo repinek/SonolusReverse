@@ -6,6 +6,7 @@ import { ModPreferences } from "./mod/data/ModPreferences";
 import { CustomBgm } from "./mod/features/CustomBgm";
 import { TitleLabel } from "./mod/features/TitleLabel";
 import { UpdateChecker } from "./mod/features/UpdateChecker";
+import { Uwuify } from "./mod/features/Uwuify";
 import { VersionCheck } from "./mod/features/VersionCheck";
 import { I18n } from "./mod/i18n/I18n";
 import { I18nHook } from "./sonolus/I18nHook";
@@ -49,6 +50,7 @@ function initMod(): void {
     VersionCheck.init();
     I18n.init();
     CustomBgm.init();
+    Uwuify.init();
     UpdateChecker.checkVersion();
 }
 

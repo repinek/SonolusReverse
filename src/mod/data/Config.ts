@@ -1,10 +1,14 @@
 import { Path } from "../../engine/native/Path";
 import { Ref } from "../../sonolus/wrappers/reactivity/Ref";
 import { Logger } from "../../utils/Logger";
+import type { UwuLevel } from "../features/Uwuify";
+
+type ConfigRefValue<T> = T extends string ? Il2Cpp.String : T;
 
 interface ConfigData {
     versionCheck: boolean;
     customBgmPath: string;
+    uwuifyLevel: UwuLevel;
 }
 
 export class Config {
@@ -14,6 +18,7 @@ export class Config {
 
     static versionCheck: boolean = false;
     static customBgmPath: string = "";
+    static uwuifyLevel: UwuLevel = "off";
 
     static load(): void {
         const path = Path.configFilePath;
@@ -46,12 +51,16 @@ export class Config {
     }
 
     // Maybe we don't need here il2cpp logic (?)
-    static registerOrGet<K extends keyof ConfigData>(key: K, initialValue: ConfigData[K]): Ref<ConfigData[K]> {
-        let ref = this._refs.get(key) as Ref<ConfigData[K]> | undefined;
+    // very very complicated
+    // very messy
+    // TODO: rewrite
+    static registerOrGet<K extends keyof ConfigData>(key: K, initialValue: ConfigData[K]): Ref<ConfigRefValue<ConfigData[K]>> {
+        let ref = this._refs.get(key) as Ref<ConfigRefValue<ConfigData[K]>> | undefined;
         if (!ref) {
-            const r = Ref.create(initialValue) as Ref<ConfigData[K]>; // r is temp ref var. TS moment???
+            const r = Ref.create(initialValue) as Ref<ConfigRefValue<ConfigData[K]>>; // r is temp ref var. TS moment???
             r.hook(() => {
-                (Config as unknown as Record<string, unknown>)[key] = r.value;
+                const value = typeof initialValue === "string" ? ((r.value as Il2Cpp.String).content ?? "") : r.value;
+                (Config as unknown as Record<string, unknown>)[key] = value;
                 Config.save();
             });
             this._refs.set(key, r);
@@ -68,7 +77,8 @@ export class Config {
     private static get fields(): Record<string, unknown> {
         return {
             versionCheck: this.versionCheck,
-            customBgmPath: this.customBgmPath
+            customBgmPath: this.customBgmPath,
+            uwuifyLevel: this.uwuifyLevel
         };
     }
 }
