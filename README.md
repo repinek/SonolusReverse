@@ -16,7 +16,7 @@
 
 A Mod for the [Sonolus](https://sonolus.com/) rhythm game with extra features, written using [Frida](https://frida.re/) and [frida-il2cpp-bridge](https://github.com/vfsfitvnm/frida-il2cpp-bridge)
 
-The latest release **1.1.3** on **Android**: refer [Installation](#installation)  
+The latest release **1.1.4** on **Android**: refer [Installation](#installation)  
 For announcements and support join our community in Discord: [SonolusReverse Discord](https://discord.gg/43FsKRzxnf)
 
 ## Screenshots
