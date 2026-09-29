@@ -2,25 +2,12 @@
     "ui": {
         "title": "SonolusReverse v{0}",
         "title_dev": "SonolusReverse v{0} - {1} ({2})",
-        "spoof": {
-            "title": "Giả mạo VIP và Chủ đề",
-            "description": "Giả mạo VIP và Chủ đề phía máy khách. Bạn cần mở lại cài đặt để cập nhật Chủ đề và VIP."
+        "popup": {
+            "ok": "OK"
         },
         "version_check": {
             "title": "Tắt tính năng kiểm tra phiên bản (trong Server)",
             "description": "Vô hiệu hóa khả năng tương thích Server."
-        },
-        "theme": {
-            "title": "Chủ đề tùy chỉnh",
-            "description": "Chủ đề màu sắc sẽ được sử dụng. Bạn đã tải {0} chủ đề tùy chỉnh.\n\nCác tệp chủ đề sẽ nằm tại: {1}\n\nBạn có thể tìm hiểu thêm về chủ đề tùy chỉnh tại đây: {2}",
-            "refresh_button": "Làm mới",
-            "import_button": "Nhập",
-            "select_button": "Chọn",
-            "popup": {
-                "message": "Mở lại cài đặt để xem các chủ đề mới.",
-                "message_error": "Không thể nhập chủ đề tùy chỉnh. Tệp bạn cung cấp không phải là chủ đề hợp lệ. Vui lòng xem hướng dẫn về định dạng chủ đề trên wiki.",
-                "ok": "OK"
-            }
         },
         "bgm": {
             "title": "Nhạc nền giao diện tùy chỉnh",
@@ -40,7 +27,7 @@
             "github_button": "GitHub",
             "popup": {
                 "checking": "Đang kiểm tra bản cập nhật...",
-                "update_available": "Đã có Phiên bản mới! Tải xuống trên GitHub Releases.",
+                "update_available": "Đã có phiên bản mới.",
                 "up_to_date": "Hiện tại, chưa có bản cập nhật nào."
             }
         }

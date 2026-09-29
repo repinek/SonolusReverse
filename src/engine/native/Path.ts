@@ -5,7 +5,6 @@ export class Path {
     private static readonly tag = "Path";
 
     private static readonly CONFIG_FILE = "config.json";
-    private static readonly CUSTOM_THEMES_DIRECTORY: string = "CustomThemes/";
 
     private static _dataPath: string | null = null;
 
@@ -95,10 +94,6 @@ export class Path {
 
     static get configFilePath(): string {
         return this.dataPath + this.CONFIG_FILE;
-    }
-
-    static get customThemesPath(): string {
-        return this.dataPath + this.CUSTOM_THEMES_DIRECTORY;
     }
 
     static get customBgmPath(): string {
