@@ -9,43 +9,33 @@
 <a href="https://discord.gg/43FsKRzxnf">
   <img src="https://img.shields.io/badge/Join%20Us%20on-Discord-blue?style=flat&logo=discord" alt="Discord">
 </a>
-<a href="https://github.com/repinek/SonolusReverse/releases/latest">
-    <img src="https://img.shields.io/badge/Download-latest-30c252?logo=github" alt="Download latest">
-</a>  
 <img src="https://github.com/repinek/SonolusReverse/actions/workflows/on-commit.yml/badge.svg" alt="Build Status">
 
-A Mod for the [Sonolus](https://sonolus.com/) rhythm game with extra features, written using [Frida](https://frida.re/) and [frida-il2cpp-bridge](https://github.com/vfsfitvnm/frida-il2cpp-bridge)
+A mod for the [Sonolus](https://sonolus.com/) rhythm game with extra features, written using [Frida](https://frida.re/) and [frida-il2cpp-bridge](https://github.com/vfsfitvnm/frida-il2cpp-bridge)
 
-The latest release **1.1.4** on **Android**: refer [Installation](#installation)  
-For announcements and support join our community in Discord: [SonolusReverse Discord](https://discord.gg/43FsKRzxnf)
+For announcements and support, join our community on Discord: [SonolusReverse Discord](https://discord.gg/43FsKRzxnf)
 
 ## Screenshots
 
 <img src="assets/images/screenshot1.jpg" width="700" alt="SonolusReverse section in Settings">
-<img src="assets/images/screenshot2.jpg" width="700" alt="Themes shortcut & Themes spoofing">
-
-> `Rosé Pine 2`, `Everforest Dark` - Custom themes  
-> `彗く星（しいたけ杯）` - An exclusive theme for tournament participants
 
 ## Features
 
 - **Custom Settings Section**
-- **VIP + Themes spoof**: Client-side unlock of VIP _(removes ads)_ and all themes _(including exclusives)_. **Requires logged-in account**
 - **Version Spoof**: Override the version used by the client compatibility checks
-- **Custom Themes**: Create your own themes in JSON format! See our [wiki](https://github.com/repinek/SonolusReverse/wiki)
-- **Custom UI BGM**: Change UI Background Music to own!
+- **Custom UI BGM**: Change the UI background music to your own!
 
 ##### Planned:
 
-See our [TODO](TODO.md). If you wanna contribute: see [Contributing](#contributing)
+See our [TODO](TODO.md). To contribute, see [Contributing](#contributing)
 
 ## Installation
 
-✅ **Android**: Install as a regular `.apk` file, downloadable from the [GitHub Releases Page](https://github.com/repinek/SonolusReverse/releases/latest)
+**No pre-built APKs are distributed.** You can follow one of these guides:
 
-⚠️ **iOS**: Currently in testing. The script is written for iOS, but there is **no release build**. You will need to build it from source.
+**✅ Android**: See the [contributing guide](#contributing) for instructions.
 
-**An iOS build guide by [JexOpy](https://github.com/JexOpy) is available [here](https://gist.github.com/JexOpy/3aed12c92824921449ba68cb5b041133).**  
+**⚠️ iOS**: A guide by [JexOpy](https://github.com/JexOpy) is available [here](https://gist.github.com/JexOpy/3aed12c92824921449ba68cb5b041133).
 **Note**: There may also be issues patching functions on recent iOS versions _(iOS 26+)_: see [Frida issue #3650](https://github.com/frida/frida/issues/3650). **It should work fine on older iOS versions.**
 
 ## Contributing
