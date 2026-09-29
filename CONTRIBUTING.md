@@ -173,10 +173,8 @@ These scripts build the agent into `./dist/agent.js` using Webpack:
 ```
 SonolusReverse/
 ├── .github                             # Github CI/CD workflows
-│   ├── workflows
-│   │   ├── on-commit.yml               # Triggered on push/PR: Builds script
-│   │   └── on-tag.yml                  # Triggered on tag: Builds APK and pushes release
-│   └── release-notes.md
+│   └── workflows
+│       └── on-commit.yml               # Triggered on push/PR: Builds script
 │
 ├── assets                              # Images for README.md
 │
@@ -193,8 +191,7 @@ SonolusReverse/
 │   │   ├── data                        # Mod Config, constants, etc.
 │   │   │   ├── Config.ts
 │   │   │   ├── Constants.ts
-│   │   │   ├── ModPreferences.ts
-│   │   │   └── ThemeLoader.ts
+│   │   │   └── ModPreferences.ts
 │   │   ├── features                    # Features logic
 │   │   ├── i18n                        # Internationalization system
 │   │   │   ├── localization            # JSON Translations Files
@@ -203,8 +200,8 @@ SonolusReverse/
 │   │   │   │   └── vi.json
 │   │   │   └── I18n.ts
 │   │   ├── ui                          # Mod UI
-│   │   │   ├── Section.ts              # Custom Sections in Settings
-│   │   │   └── SectionUtils.ts
+│   │   │   ├── Fields
+│   │   │   └── Section.ts              # Custom Sections in Settings
 │   │   └── utils                       # Helper functions for mod
 │   │
 │   ├── sonolus                         # Sonolus logic
