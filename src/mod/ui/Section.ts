@@ -13,8 +13,6 @@ import { I18n } from "../i18n/I18n";
 import { Version } from "../utils/version";
 import { aboutField } from "./fields/AboutField";
 import { bgmField } from "./fields/BgmField";
-import { spoofField } from "./fields/SpoofField";
-import { themeField } from "./fields/ThemeField";
 import { versionField } from "./fields/VersionField";
 
 export class CustomSectionMod {
@@ -30,7 +28,7 @@ export class CustomSectionMod {
         }
 
         const title = this.title();
-        const rows = Rows.new().gap(20).children([title, spoofField(), versionField(), themeField(), bgmField(), aboutField()]);
+        const rows = Rows.new().gap(20).children([title, versionField(), bgmField(), aboutField()]);
 
         const section = CustomSection.new().content(rows).validate();
 

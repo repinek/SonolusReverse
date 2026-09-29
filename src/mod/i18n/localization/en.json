@@ -2,25 +2,12 @@
     "ui": {
         "title": "SonolusReverse v{0}",
         "title_dev": "SonolusReverse v{0} (build {1}) - {2} ({3})",
-        "spoof": {
-            "title": "VIP and Themes Spoof",
-            "description": "Client-side spoof of VIP and owned themes. You need to re-open settings to update owned Themes and VIP."
+        "popup": {
+            "ok": "OK"
         },
         "version_check": {
             "title": "Disable App Version check",
             "description": "Disables client compatibility check when connecting in custom servers"
-        },
-        "theme": {
-            "title": "Theme",
-            "description": "Color theme to use. You have loaded {0} custom themes.\n\nTheme files are located at: {1}\n\nLearn more about custom themes: {2}",
-            "refresh_button": "Refresh",
-            "import_button": "Import",
-            "select_button": "Select",
-            "popup": {
-                "message": "Re-open settings to see new themes",
-                "message_error": "Failed to import theme. The file you provided is not a valid theme.\nCheck the wiki for theme format reference.",
-                "ok": "OK"
-            }
         },
         "bgm": {
             "title": "UI BGM",
@@ -40,7 +27,7 @@
             "github_button": "GitHub",
             "popup": {
                 "checking": "Checking for updates...",
-                "update_available": "New version available! Download it on GitHub Releases.",
+                "update_available": "A new version is available.",
                 "up_to_date": "You are using the latest version."
             }
         }

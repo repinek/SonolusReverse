@@ -3,7 +3,6 @@ import { Ref } from "../../sonolus/wrappers/reactivity/Ref";
 import { Logger } from "../../utils/Logger";
 
 interface ConfigData {
-    spoofEnabled: boolean;
     versionCheck: boolean;
     customBgmPath: string;
 }
@@ -13,7 +12,6 @@ export class Config {
 
     private static _refs = new Map<string, Ref<unknown>>();
 
-    static spoofEnabled: boolean = true;
     static versionCheck: boolean = false;
     static customBgmPath: string = "";
 
@@ -23,6 +21,7 @@ export class Config {
             // Looks messy tbh
             // Maybe use `Object.assign(Config, data) instead this
             // But not typed then
+            // TODO FIXME
             const data = JSON.parse(File.readAllText(path)) as ConfigData;
             const state = Config as unknown as Record<keyof ConfigData, unknown>;
             for (const key of Object.keys(data) as (keyof ConfigData)[]) {
@@ -68,7 +67,6 @@ export class Config {
 
     private static get fields(): Record<string, unknown> {
         return {
-            spoofEnabled: this.spoofEnabled,
             versionCheck: this.versionCheck,
             customBgmPath: this.customBgmPath
         };

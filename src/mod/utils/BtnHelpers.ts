@@ -7,7 +7,7 @@ import { I18n } from "../i18n/I18n";
 
 export function createOkBtn(): ImgLblBtn {
     return ImgLblBtn.new()
-        .title(I18n.tRef("ui.theme.popup.ok"))
+        .title(I18n.tRef("ui.popup.ok"))
         .icon(Dep.opImplicit(Assets.getAsset("Check")))
         .validate();
 }
