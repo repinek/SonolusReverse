@@ -17,7 +17,7 @@ For announcements and support, join our community on Discord: [SonolusReverse Di
 
 ## Screenshots
 
-<img src="assets/images/screenshot1.jpg" width="700" alt="SonolusReverse section in Settings">
+<img src="assets/images/screenshot1.png" width="700" alt="SonolusReverse section in Settings">
 
 ## Features
 
