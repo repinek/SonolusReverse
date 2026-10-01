@@ -1,22 +1,34 @@
 import { AssemblyHelper } from "../../engine/AssemblyHelper";
+import { UEObject } from "../../engine/wrappers/Object";
+import { Logger } from "../../utils/Logger";
 import { Config } from "../data/Config";
 
 /*
  * Ported from https://github.com/UntitledCharts/uc-sonoserver/blob/734097db2111ddfb2a5c1b3985d6ce7b3e637251/helpers/owoify.py
  * Original implementation and this project are licensed under GPL-3.0
  *
- * TODO: add mode with less uwuify - hook sonolus i18n keys only, not ALL text
+ * Some code taken from https://github.com/repinek/fallguys-frida-modmenu/blob/803ef281be402cfe6c04f53723b5f3a7faf98c50/src/modules/game/UwUify.ts
  */
 
+// TODO: add mode with less uwuify - hook sonolus i18n keys only, not ALL text
+// TODO: fix mess (relies on config)
 export const UWUIFY_LEVELS = ["off", "owo", "uwu", "uvu", "max"] as const;
 export type UwuLevel = (typeof UWUIFY_LEVELS)[number];
 
+interface CachedText {
+    original: string;
+    transformed: string;
+}
+
 export class Uwuify {
+    private static _UIText: Il2Cpp.Class | null = null;
+    private static cachedTexts = new Map<number, CachedText>();
+
     static init(): void {
-        const UIText = AssemblyHelper.UI.class("UnityEngine.UI.Text");
+        this._UIText = AssemblyHelper.UI.class("UnityEngine.UI.Text");
 
         // @ts-ignore
-        UIText.method<void>("set_text", 1).implementation = this.setTextHook;
+        this._UIText.method<void>("set_text", 1).implementation = this.setTextHook;
     }
 
     private static setTextHook(this: Il2Cpp.Object, value: Il2Cpp.String): void {
@@ -25,29 +37,75 @@ export class Uwuify {
             return;
         }
 
-        const content = value.content;
-        if (content) value = Il2Cpp.string(Uwuify.owoify(content, Config.uwuifyLevel));
+        if (Config.uwuifyLevel != "off") {
+            const content = value.content;
+            // if (content && content.length > 0) value = Il2Cpp.string(Uwuify.owoify(content, Config.uwuifyLevel, true));
+            if (content && content.length > 0) value = Il2Cpp.string(Uwuify.createOwoifiedString(this, content));
+        }
 
         this.method<void>("set_text", 1).invoke(value);
     }
 
-    static owoify(source: string, level: UwuLevel = "owo", symbols = true): string {
-        if (level === "off") return source;
+    static toggleUwuifyMode(level: UwuLevel): void {
+        if (level !== "off") {
+            const objects = UEObject.findObjectsOfType(this._UIText!.type.object, false);
 
-        // Keep Unity tags and URLs untouched
-        return source
+            for (const object of objects) {
+                const objectID = UEObject.getInstanceID(object);
+                const current = object.method<Il2Cpp.String>("get_text", 0).invoke().content;
+                const original = this.cachedTexts.get(objectID)?.original ?? current;
+
+                if (original !== null) object.method<void>("set_text", 1).invoke(Il2Cpp.string(original));
+            }
+        } else {
+            for (const [objectID, { original }] of this.cachedTexts) {
+                const textObject = UEObject.findObjectFromInstanceID(objectID);
+
+                if (textObject) {
+                    textObject.method<void>("set_text", 1).invoke(Il2Cpp.string(original));
+                }
+            }
+            this.cachedTexts.clear();
+        }
+    }
+
+    private static createOwoifiedString(object: Il2Cpp.Object, value: string): string {
+        const objectID = UEObject.getInstanceID(object);
+        const cached = this.cachedTexts.get(objectID);
+        const original = cached?.transformed === value ? cached.original : value;
+        const transformed = this.owoify(original, Config.uwuifyLevel, true);
+
+        this.cachedTexts.set(objectID, { original, transformed });
+        return transformed;
+    }
+
+    /* Owoifies string, keeping Unity tags and URLs untouched */
+    private static owoify(source: string, level: UwuLevel, symbols: boolean): string {
+        const uwuified = source
+            // Keep Unity tags and URLs untouched
             .split(/(<[^>]*>|https?:\/\/\S+|www\.\S+|\s+)/g)
             .map(part => {
                 if (!part || /^\s+$/.test(part) || /^<[^>]*>$/.test(part) || /^(?:https?:\/\/|www\.)/.test(part)) return part;
+
                 return this.owoifyWord(part, level, symbols);
             })
             .join("");
+        Logger.debug(uwuified);
+        return uwuified;
     }
 
+    /* Owoifies word */
     private static owoifyWord(source: string, level: UwuLevel, symbols: boolean): string {
         let text = source;
+
+        // (...args: string[] => string) is used for `match => ...`
         const replace = (pattern: RegExp, value: string | ((...args: string[]) => string)): void => {
             text = text.replace(pattern, value as string);
+        };
+
+        const replaceWithFace = (pattern: RegExp): void => {
+            const match = text.match(pattern);
+            if (match) text = text.replaceAll(match[0], ` ${this.randomFace()}`);
         };
 
         // All levels
@@ -78,7 +136,10 @@ export class Uwuify {
 
         // Max
         if (level === "max") {
+            // More than 2 symbols, 1/3 chance and if A-Za-z -> double first letter
+            // Hello -> H-Hello
             if (text.length >= 2 && Math.floor(Math.random() * 3) === 0 && /^[A-Za-z]/.test(text)) text = `${text[0]}-${text}`;
+
             replace(/([Ss])(?=[aeiou])/g, "$1h");
             replace(/y$/g, "yw");
             replace(/([^w])e$/g, "$1ew");
@@ -88,19 +149,16 @@ export class Uwuify {
             replace(/\b([Ww])ith\b/g, "$1if");
             replace(/\b([Jj])ust\b/g, "$1uwst");
             replace(/\b([Hh])ave\b/g, "$1ab");
+
+            // 1/4 for adding ~
             if (Math.floor(Math.random() * 4) === 0) text += "~";
         }
 
         // Max and uvu
         if (level === "max" || level === "uvu") {
-            if (symbols) {
-                replace(/[({<]/g, "｡･:*:･ﾟ★,｡･:*:･ﾟ☆");
-                replace(/[)}>]/g, "☆ﾟ･:*:･｡,★ﾟ･:*:･｡");
-                replace(/[.,](?![0-9])/g, ` ${this.randomFace()}`);
-                replace(/[!;]+/g, ` ${this.randomFace()}`);
-            }
-
+            // 1/3 for replace `o` to `owo`
             if (Math.floor(Math.random() * 3) > 0) replace(/o/g, "owo");
+
             replace(/ew/g, "uwu");
             replace(/([Hh])ey/g, "$1ay");
             replace(/Dead/g, "Ded");
@@ -110,6 +168,15 @@ export class Uwuify {
 
         // max, uvu and uwu
         if (level === "max" || level === "uvu" || level === "uwu") {
+            if (symbols) {
+                // Replace ({<>}) with stars
+                replace(/[({<]/g, "｡･:*:･ﾟ★,｡･:*:･ﾟ☆");
+                replace(/[)}>]/g, "☆ﾟ･:*:･｡,★ﾟ･:*:･｡");
+                // Replace . , ! ; with faces (excluding float numbers)
+                replaceWithFace(/[.,](?![0-9])/);
+                replaceWithFace(/[!;]+/);
+            }
+
             replace(/That/g, "Dat");
             replace(/that/g, "dat");
             replace(/[Tt]h(?![Ee])/g, match => (match[0] === "T" ? "F" : "f"));
@@ -156,6 +223,7 @@ export class Uwuify {
         return text;
     }
 
+    /** @returns random uwufied face */
     private static randomFace(): string {
         const faces = [
             "(・`ω´・)",
