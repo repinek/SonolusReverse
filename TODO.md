@@ -10,6 +10,7 @@ Mostly for developers and me, so I don't forgetting things.
     - You can see what I'm talking about when auto-exit is configured
 - [ ] Fix versioning (since frida-il2cpp-bridge updated)
 - [ ] Add Unity version to log banner
+- [ ] Add note for disable version app check
 
 ### Features
 
