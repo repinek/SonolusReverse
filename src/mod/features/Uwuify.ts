@@ -39,8 +39,7 @@ export class Uwuify {
 
         if (Config.uwuifyLevel != "off") {
             const content = value.content;
-            // if (content && content.length > 0) value = Il2Cpp.string(Uwuify.owoify(content, Config.uwuifyLevel, true));
-            if (content && content.length > 0) value = Il2Cpp.string(Uwuify.createOwoifiedString(this, content));
+            if (content && content.length > 0) value = Il2Cpp.string(Uwuify.createUwuifiedString(this, content));
         }
 
         this.method<void>("set_text", 1).invoke(value);
@@ -69,33 +68,33 @@ export class Uwuify {
         }
     }
 
-    private static createOwoifiedString(object: Il2Cpp.Object, value: string): string {
+    private static createUwuifiedString(object: Il2Cpp.Object, value: string): string {
         const objectID = UEObject.getInstanceID(object);
         const cached = this.cachedTexts.get(objectID);
         const original = cached?.transformed === value ? cached.original : value;
-        const transformed = this.owoify(original, Config.uwuifyLevel, true);
+        const transformed = this.uwuify(original, Config.uwuifyLevel, true);
 
         this.cachedTexts.set(objectID, { original, transformed });
         return transformed;
     }
 
-    /* Owoifies string, keeping Unity tags and URLs untouched */
-    private static owoify(source: string, level: UwuLevel, symbols: boolean): string {
+    /* UwUifies string, keeping Unity tags and URLs untouched */
+    private static uwuify(source: string, level: UwuLevel, symbols: boolean): string {
         const uwuified = source
             // Keep Unity tags and URLs untouched
             .split(/(<[^>]*>|https?:\/\/\S+|www\.\S+|\s+)/g)
             .map(part => {
                 if (!part || /^\s+$/.test(part) || /^<[^>]*>$/.test(part) || /^(?:https?:\/\/|www\.)/.test(part)) return part;
 
-                return this.owoifyWord(part, level, symbols);
+                return this.uwuifyWord(part, level, symbols);
             })
             .join("");
         Logger.debug(uwuified);
         return uwuified;
     }
 
-    /* Owoifies word */
-    private static owoifyWord(source: string, level: UwuLevel, symbols: boolean): string {
+    /* UwUifies word */
+    private static uwuifyWord(source: string, level: UwuLevel, symbols: boolean): string {
         let text = source;
 
         // (...args: string[] => string) is used for `match => ...`
