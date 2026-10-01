@@ -1,17 +1,16 @@
 import { AssemblyHelper } from "../../engine/AssemblyHelper";
 import { UEObject } from "../../engine/wrappers/Object";
-import { Logger } from "../../utils/Logger";
 import { Config } from "../data/Config";
 
 /*
  * Ported from https://github.com/UntitledCharts/uc-sonoserver/blob/734097db2111ddfb2a5c1b3985d6ce7b3e637251/helpers/owoify.py
  * Original implementation and this project are licensed under GPL-3.0
  *
- * Some code taken from https://github.com/repinek/fallguys-frida-modmenu/blob/803ef281be402cfe6c04f53723b5f3a7faf98c50/src/modules/game/UwUify.ts
+ * Some code is taken from https://github.com/repinek/fallguys-frida-modmenu/blob/803ef281be402cfe6c04f53723b5f3a7faf98c50/src/modules/game/UwUify.ts
  */
 
-// TODO: add mode with less uwuify - hook sonolus i18n keys only, not ALL text
-// TODO: fix mess (relies on config)
+// TODO: add a less UwUified mode - hook Sonolus i18n keys only, not ALL text
+// TODO: fix this mess (it relies on config)
 export const UWUIFY_LEVELS = ["off", "owo", "uwu", "uvu", "max"] as const;
 export type UwuLevel = (typeof UWUIFY_LEVELS)[number];
 
@@ -47,7 +46,8 @@ export class Uwuify {
 
     static toggleUwuifyMode(level: UwuLevel): void {
         if (level !== "off") {
-            const objects = UEObject.findObjectsOfType(this._UIText!.type.object, false);
+            // Maybe we do not need true here, but then the main menu does not update
+            const objects = UEObject.findObjectsOfType(this._UIText!.type.object, true);
 
             for (const object of objects) {
                 const objectID = UEObject.getInstanceID(object);
@@ -78,7 +78,7 @@ export class Uwuify {
         return transformed;
     }
 
-    /* UwUifies string, keeping Unity tags and URLs untouched */
+    /* UwUifies a string, keeping Unity tags and URLs untouched */
     private static uwuify(source: string, level: UwuLevel, symbols: boolean): string {
         const uwuified = source
             // Keep Unity tags and URLs untouched
@@ -89,15 +89,15 @@ export class Uwuify {
                 return this.uwuifyWord(part, level, symbols);
             })
             .join("");
-        Logger.debug(uwuified);
+        // Logger.debug(uwuified);
         return uwuified;
     }
 
-    /* UwUifies word */
+    /* UwUifies a word */
     private static uwuifyWord(source: string, level: UwuLevel, symbols: boolean): string {
         let text = source;
 
-        // (...args: string[] => string) is used for `match => ...`
+        // The (...args: string[]) => string callback is used for `match => ...`
         const replace = (pattern: RegExp, value: string | ((...args: string[]) => string)): void => {
             text = text.replace(pattern, value as string);
         };
@@ -135,7 +135,7 @@ export class Uwuify {
 
         // Max
         if (level === "max") {
-            // More than 2 symbols, 1/3 chance and if A-Za-z -> double first letter
+            // At least 2 characters, a 1/3 chance, and starts with A-Za-z -> double the first letter
             // Hello -> H-Hello
             if (text.length >= 2 && Math.floor(Math.random() * 3) === 0 && /^[A-Za-z]/.test(text)) text = `${text[0]}-${text}`;
 
@@ -149,13 +149,13 @@ export class Uwuify {
             replace(/\b([Jj])ust\b/g, "$1uwst");
             replace(/\b([Hh])ave\b/g, "$1ab");
 
-            // 1/4 for adding ~
+            // 1/4 chance to add ~
             if (Math.floor(Math.random() * 4) === 0) text += "~";
         }
 
         // Max and uvu
         if (level === "max" || level === "uvu") {
-            // 1/3 for replace `o` to `owo`
+            // 1/3 chance to replace `o` with `owo`
             if (Math.floor(Math.random() * 3) > 0) replace(/o/g, "owo");
 
             replace(/ew/g, "uwu");
@@ -165,13 +165,13 @@ export class Uwuify {
             replace(/n[aeiou]*t/g, "nd");
         }
 
-        // max, uvu and uwu
+        // Max, uvu, and uwu
         if (level === "max" || level === "uvu" || level === "uwu") {
             if (symbols) {
-                // Replace ({<>}) with stars
+                // Replace brackets with stars
                 replace(/[({<]/g, "｡･:*:･ﾟ★,｡･:*:･ﾟ☆");
                 replace(/[)}>]/g, "☆ﾟ･:*:･｡,★ﾟ･:*:･｡");
-                // Replace . , ! ; with faces (excluding float numbers)
+                // Replace ., !, and ; with faces, excluding decimal separators
                 replaceWithFace(/[.,](?![0-9])/);
                 replaceWithFace(/[!;]+/);
             }
@@ -222,7 +222,7 @@ export class Uwuify {
         return text;
     }
 
-    /** @returns random uwufied face */
+    /** @returns A random UwUified face */
     private static randomFace(): string {
         const faces = [
             "(・`ω´・)",

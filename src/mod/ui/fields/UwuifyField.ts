@@ -1,6 +1,5 @@
 import { System } from "../../../engine/System";
 import { SelectField } from "../../../sonolus/wrappers/ui/common/fields/SelectField";
-import { Logger } from "../../../utils/Logger";
 import { Config } from "../../data/Config";
 import { Uwuify } from "../../features/Uwuify";
 import { I18n } from "../../i18n/I18n";
@@ -9,8 +8,6 @@ export function UwuifyField(): SelectField<Il2Cpp.String> {
     const valueRef = Config.registerOrGet("uwuifyLevel", Config.uwuifyLevel);
 
     valueRef.hook(() => {
-        // TODO: re-render ui text
-        Logger.debug(valueRef.value.content);
         Uwuify.toggleUwuifyMode(Config.uwuifyLevel);
         return;
     });
