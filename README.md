@@ -4,6 +4,10 @@
 > If you enjoy Sonolus, please consider supporting Sonolus by purchasing VIP or gems in-game.  
 > If you want to contact me: see [Contact Me](#contact-me)
 
+> [!WARNING]
+> Following a request from the Sonolus developer, certain features **have been removed** from this project.  
+> Pre-built APKs are **no longer distributed**.
+
 # SonolusReverse
 
 <a href="https://discord.gg/43FsKRzxnf">
