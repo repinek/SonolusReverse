@@ -14,14 +14,14 @@ import { Config } from "../data/Config";
 export const UWUIFY_LEVELS = ["off", "owo", "uwu", "uvu", "max"] as const;
 export type UwuLevel = (typeof UWUIFY_LEVELS)[number];
 
-interface CachedText {
-    original: string;
-    transformed: string;
+interface TextCacheEntry {
+    originalText: string;
+    uwuifiedText: string;
 }
 
 export class Uwuify {
     private static _UIText: Il2Cpp.Class | null = null;
-    private static cachedTexts = new Map<number, CachedText>();
+    private static textCacheByInstanceId = new Map<number, TextCacheEntry>();
 
     static init(): void {
         this._UIText = AssemblyHelper.UI.class("UnityEngine.UI.Text");
@@ -47,179 +47,182 @@ export class Uwuify {
     static toggleUwuifyMode(level: UwuLevel): void {
         if (level !== "off") {
             // Maybe we do not need true here, but then the main menu does not update
-            const objects = UEObject.findObjectsOfType(this._UIText!.type.object, true);
+            const uiTextObjects = UEObject.findObjectsOfType(this._UIText!.type.object, true);
 
-            for (const object of objects) {
-                const objectID = UEObject.getInstanceID(object);
-                const current = object.method<Il2Cpp.String>("get_text", 0).invoke().content;
-                const original = this.cachedTexts.get(objectID)?.original ?? current;
+            for (const uiTextObject of uiTextObjects) {
+                const instanceId = UEObject.getInstanceID(uiTextObject);
+                const currentText = uiTextObject.method<Il2Cpp.String>("get_text", 0).invoke().content;
+                const originalText = this.textCacheByInstanceId.get(instanceId)?.originalText ?? currentText;
 
-                if (original !== null) object.method<void>("set_text", 1).invoke(Il2Cpp.string(original));
+                if (originalText !== null) uiTextObject.method<void>("set_text", 1).invoke(Il2Cpp.string(originalText));
             }
         } else {
-            for (const [objectID, { original }] of this.cachedTexts) {
-                const textObject = UEObject.findObjectFromInstanceID(objectID);
+            for (const [instanceId, { originalText }] of this.textCacheByInstanceId) {
+                const uiTextObject = UEObject.findObjectFromInstanceID(instanceId);
 
-                if (textObject) {
-                    textObject.method<void>("set_text", 1).invoke(Il2Cpp.string(original));
+                if (uiTextObject) {
+                    uiTextObject.method<void>("set_text", 1).invoke(Il2Cpp.string(originalText));
                 }
             }
-            this.cachedTexts.clear();
+            this.textCacheByInstanceId.clear();
         }
     }
 
-    private static createUwuifiedString(object: Il2Cpp.Object, value: string): string {
-        const objectID = UEObject.getInstanceID(object);
-        const cached = this.cachedTexts.get(objectID);
-        const original = cached?.transformed === value ? cached.original : value;
-        const transformed = this.uwuify(original, Config.uwuifyLevel, true);
+    private static createUwuifiedString(uiTextObject: Il2Cpp.Object, value: string): string {
+        const instanceId = UEObject.getInstanceID(uiTextObject);
+        const cachedText = this.textCacheByInstanceId.get(instanceId);
+        const originalText = cachedText?.uwuifiedText === value ? cachedText.originalText : value;
+        const uwuifiedText = this.uwuify(originalText, Config.uwuifyLevel, true);
 
-        this.cachedTexts.set(objectID, { original, transformed });
-        return transformed;
+        this.textCacheByInstanceId.set(instanceId, { originalText, uwuifiedText });
+        return uwuifiedText;
     }
 
     /* UwUifies a string, keeping Unity tags and URLs untouched */
-    private static uwuify(source: string, level: UwuLevel, symbols: boolean): string {
-        const uwuified = source
-            // Keep Unity tags and URLs untouched
+    private static uwuify(sourceText: string, level: UwuLevel, includeSymbols: boolean): string {
+        const uwuifiedText = sourceText
+            // Keep empty strings, Unity tags and URLs untouched
             .split(/(<[^>]*>|https?:\/\/\S+|www\.\S+|\s+)/g)
-            .map(part => {
-                if (!part || /^\s+$/.test(part) || /^<[^>]*>$/.test(part) || /^(?:https?:\/\/|www\.)/.test(part)) return part;
+            .map(segment => {
+                if (!segment || /^\s+$/.test(segment) || /^<[^>]*>$/.test(segment) || /^(?:https?:\/\/|www\.)/.test(segment)) return segment;
 
-                return this.uwuifyWord(part, level, symbols);
+                return this.uwuifyWord(segment, level, includeSymbols);
             })
             .join("");
-        // Logger.debug(uwuified);
-        return uwuified;
+
+        // Logger.debug(uwuifiedText);
+        return uwuifiedText;
     }
 
     /* UwUifies a word */
-    private static uwuifyWord(source: string, level: UwuLevel, symbols: boolean): string {
-        let text = source;
+    private static uwuifyWord(sourceWord: string, level: UwuLevel, includeSymbols: boolean): string {
+        let transformedWord = sourceWord;
 
         // The (...args: string[]) => string callback is used for `match => ...`
-        const replace = (pattern: RegExp, value: string | ((...args: string[]) => string)): void => {
-            text = text.replace(pattern, value as string);
+        const replaceText = (pattern: RegExp, replacement: string | ((...args: string[]) => string)): void => {
+            transformedWord = transformedWord.replace(pattern, replacement as string);
         };
 
         const replaceWithFace = (pattern: RegExp): void => {
-            const match = text.match(pattern);
-            if (match) text = text.replaceAll(match[0], ` ${this.randomFace()}`);
+            const match = transformedWord.match(pattern);
+            if (match) transformedWord = transformedWord.replaceAll(match[0], ` ${this.randomFace()}`);
         };
 
         // All levels
-        replace(/([Ff])uc/g, "$1wuc");
-        replace(/([Mm])om/g, "$1wom");
-        replace(/\b([Tt])ime\b/g, "$1im");
-        replace(/^Me$/, "Mwe");
-        replace(/^me$/, "mwe");
-        replace(/([Oo])ver/g, "$1wor");
-        replace(/ove/g, "uv");
-        replace(/OVE/g, "UV");
-        replace(/\b(ha|hah|heh|hehe)+\b/gi, "hehe xD");
-        replace(/\b([Tt])he\b/g, "$1eh");
-        replace(/\bYou\b/g, "U");
-        replace(/\byou\b/g, "u");
-        replace(/Read/g, "Wead");
-        replace(/read/g, "wead");
-        replace(/([Ww])orse/g, "$1ose");
-        replace(/([Gg])reat/g, "$1wate");
-        replace(/([Aa])viat/g, "$1wiat");
-        replace(/([Dd])edicat/g, "$1editat");
-        replace(/([Rr])emember/g, "$1ember");
-        replace(/([Ww])hen/g, "$1en");
-        replace(/([Ff])righten(ed)*/g, "$1rigten");
-        replace(/Meme/g, "mem");
-        replace(/Mem/g, "Mem");
-        replace(/^([Ff])eel$/, "$1ell");
+        replaceText(/([Ff])uc/g, "$1wuc");
+        replaceText(/([Mm])om/g, "$1wom");
+        replaceText(/\b([Tt])ime\b/g, "$1im");
+        replaceText(/^Me$/, "Mwe");
+        replaceText(/^me$/, "mwe");
+        replaceText(/([Oo])ver/g, "$1wor");
+        replaceText(/ove/g, "uv");
+        replaceText(/OVE/g, "UV");
+        replaceText(/\b(ha|hah|heh|hehe)+\b/gi, "hehe xD");
+        replaceText(/\b([Tt])he\b/g, "$1eh");
+        replaceText(/\bYou\b/g, "U");
+        replaceText(/\byou\b/g, "u");
+        replaceText(/Read/g, "Wead");
+        replaceText(/read/g, "wead");
+        replaceText(/([Ww])orse/g, "$1ose");
+        replaceText(/([Gg])reat/g, "$1wate");
+        replaceText(/([Aa])viat/g, "$1wiat");
+        replaceText(/([Dd])edicat/g, "$1editat");
+        replaceText(/([Rr])emember/g, "$1ember");
+        replaceText(/([Ww])hen/g, "$1en");
+        replaceText(/([Ff])righten(ed)*/g, "$1rigten");
+        replaceText(/Meme/g, "mem");
+        replaceText(/Mem/g, "Mem");
+        replaceText(/^([Ff])eel$/, "$1ell");
 
         // Max
         if (level === "max") {
             // At least 2 characters, a 1/3 chance, and starts with A-Za-z -> double the first letter
             // Hello -> H-Hello
-            if (text.length >= 2 && Math.floor(Math.random() * 3) === 0 && /^[A-Za-z]/.test(text)) text = `${text[0]}-${text}`;
+            if (transformedWord.length >= 2 && Math.floor(Math.random() * 3) === 0 && /^[A-Za-z]/.test(transformedWord)) {
+                transformedWord = `${transformedWord[0]}-${transformedWord}`;
+            }
 
-            replace(/([Ss])(?=[aeiou])/g, "$1h");
-            replace(/y$/g, "yw");
-            replace(/([^w])e$/g, "$1ew");
-            replace(/([A-Za-z])ing\b/g, "$1in");
-            replace(/\b([Aa])nd\b/g, "$1n");
-            replace(/\b([Ff])or\b/g, "$1wo");
-            replace(/\b([Ww])ith\b/g, "$1if");
-            replace(/\b([Jj])ust\b/g, "$1uwst");
-            replace(/\b([Hh])ave\b/g, "$1ab");
+            replaceText(/([Ss])(?=[aeiou])/g, "$1h");
+            replaceText(/y$/g, "yw");
+            replaceText(/([^w])e$/g, "$1ew");
+            replaceText(/([A-Za-z])ing\b/g, "$1in");
+            replaceText(/\b([Aa])nd\b/g, "$1n");
+            replaceText(/\b([Ff])or\b/g, "$1wo");
+            replaceText(/\b([Ww])ith\b/g, "$1if");
+            replaceText(/\b([Jj])ust\b/g, "$1uwst");
+            replaceText(/\b([Hh])ave\b/g, "$1ab");
 
             // 1/4 chance to add ~
-            if (Math.floor(Math.random() * 4) === 0) text += "~";
+            if (Math.floor(Math.random() * 4) === 0) transformedWord += "~";
         }
 
         // Max and uvu
         if (level === "max" || level === "uvu") {
             // 1/3 chance to replace `o` with `owo`
-            if (Math.floor(Math.random() * 3) > 0) replace(/o/g, "owo");
+            if (Math.floor(Math.random() * 3) > 0) replaceText(/o/g, "owo");
 
-            replace(/ew/g, "uwu");
-            replace(/([Hh])ey/g, "$1ay");
-            replace(/Dead/g, "Ded");
-            replace(/dead/g, "ded");
-            replace(/n[aeiou]*t/g, "nd");
+            replaceText(/ew/g, "uwu");
+            replaceText(/([Hh])ey/g, "$1ay");
+            replaceText(/Dead/g, "Ded");
+            replaceText(/dead/g, "ded");
+            replaceText(/n[aeiou]*t/g, "nd");
         }
 
         // Max, uvu, and uwu
         if (level === "max" || level === "uvu" || level === "uwu") {
-            if (symbols) {
+            if (includeSymbols) {
                 // Replace brackets with stars
-                replace(/[({<]/g, "｡･:*:･ﾟ★,｡･:*:･ﾟ☆");
-                replace(/[)}>]/g, "☆ﾟ･:*:･｡,★ﾟ･:*:･｡");
+                replaceText(/[({<]/g, "｡･:*:･ﾟ★,｡･:*:･ﾟ☆");
+                replaceText(/[)}>]/g, "☆ﾟ･:*:･｡,★ﾟ･:*:･｡");
                 // Replace ., !, and ; with faces, excluding decimal separators
                 replaceWithFace(/[.,](?![0-9])/);
                 replaceWithFace(/[!;]+/);
             }
 
-            replace(/That/g, "Dat");
-            replace(/that/g, "dat");
-            replace(/[Tt]h(?![Ee])/g, match => (match[0] === "T" ? "F" : "f"));
-            replace(/TH(?!E)/g, "F");
-            replace(/le$/g, "wal");
-            replace(/Ve/g, "We");
-            replace(/ve/g, "we");
-            replace(/ry/g, "wwy");
-            replace(/(?:R|L)/g, "W");
-            replace(/(?:r|l)/g, "w");
+            replaceText(/That/g, "Dat");
+            replaceText(/that/g, "dat");
+            replaceText(/[Tt]h(?![Ee])/g, match => (match[0] === "T" ? "F" : "f"));
+            replaceText(/TH(?!E)/g, "F");
+            replaceText(/le$/g, "wal");
+            replaceText(/Ve/g, "We");
+            replaceText(/ve/g, "we");
+            replaceText(/ry/g, "wwy");
+            replaceText(/(?:R|L)/g, "W");
+            replaceText(/(?:r|l)/g, "w");
         }
 
         // All levels
-        replace(/n([aeiou])/g, "ny$1");
-        replace(/N([aeiou])/g, "Ny$1");
-        replace(/N([AEIOU])/g, "NY$1");
-        replace(/ll/g, "ww");
-        replace(/([aeiur])l$/g, "$1wl");
-        replace(/[AEIUR]([lL])$/g, "W$1");
-        replace(/OLD/g, "OWLD");
-        replace(/([Oo])ld/g, "$1wld");
-        replace(/OL/g, "OWL");
-        replace(/([Oo])l/g, "$1wl");
-        replace(/[LR]([oO])/g, "W$1");
-        replace(/[lr]o/g, "wo");
-        replace(/([BCDFGHJKMNPQSTXYZ])([oO])/g, (_match, first, second) => `${first}${second === second.toUpperCase() ? "W" : "w"}${second}`);
-        replace(/([bcdfghjkmnpqstxyz])o/g, "$1wo");
-        replace(/[vw]le/g, "wal");
-        replace(/FI/g, "FWI");
-        replace(/([Ff])i/g, "$1wi");
-        replace(/([Vv])er/g, "$1wer");
-        replace(/([Pp])oi/g, "$1woi");
-        replace(/([DdFfGgHhJjPpQqRrSsTtXxYyZz])le$/g, "$1wal");
-        replace(/([BbCcDdFfGgKkPpQqSsTtWwXxZz])r/g, "$1w");
-        replace(/Ly/g, "Wy");
-        replace(/ly/g, "wy");
-        replace(/([Pp])le/g, "$1we");
-        replace(/NR/g, "NW");
-        replace(/([Nn])r/g, "$1w");
-        replace(/Mem/g, "mwem");
-        replace(/mem/g, "Mwem");
-        replace(/([Nn])ywo/g, "$1yo");
+        replaceText(/n([aeiou])/g, "ny$1");
+        replaceText(/N([aeiou])/g, "Ny$1");
+        replaceText(/N([AEIOU])/g, "NY$1");
+        replaceText(/ll/g, "ww");
+        replaceText(/([aeiur])l$/g, "$1wl");
+        replaceText(/[AEIUR]([lL])$/g, "W$1");
+        replaceText(/OLD/g, "OWLD");
+        replaceText(/([Oo])ld/g, "$1wld");
+        replaceText(/OL/g, "OWL");
+        replaceText(/([Oo])l/g, "$1wl");
+        replaceText(/[LR]([oO])/g, "W$1");
+        replaceText(/[lr]o/g, "wo");
+        replaceText(/([BCDFGHJKMNPQSTXYZ])([oO])/g, (_match, first, second) => `${first}${second === second.toUpperCase() ? "W" : "w"}${second}`);
+        replaceText(/([bcdfghjkmnpqstxyz])o/g, "$1wo");
+        replaceText(/[vw]le/g, "wal");
+        replaceText(/FI/g, "FWI");
+        replaceText(/([Ff])i/g, "$1wi");
+        replaceText(/([Vv])er/g, "$1wer");
+        replaceText(/([Pp])oi/g, "$1woi");
+        replaceText(/([DdFfGgHhJjPpQqRrSsTtXxYyZz])le$/g, "$1wal");
+        replaceText(/([BbCcDdFfGgKkPpQqSsTtWwXxZz])r/g, "$1w");
+        replaceText(/Ly/g, "Wy");
+        replaceText(/ly/g, "wy");
+        replaceText(/([Pp])le/g, "$1we");
+        replaceText(/NR/g, "NW");
+        replaceText(/([Nn])r/g, "$1w");
+        replaceText(/Mem/g, "mwem");
+        replaceText(/mem/g, "Mwem");
+        replaceText(/([Nn])ywo/g, "$1yo");
 
-        return text;
+        return transformedWord;
     }
 
     /** @returns A random UwUified face */
