@@ -3,7 +3,7 @@ import { Config } from "../../data/Config";
 import { I18n } from "../../i18n/I18n";
 
 export function versionField(): ToggleField {
-    const valueRef = Config.registerOrGet("versionCheck", Config.versionCheck);
+    const valueRef = Config.getRef("versionCheck");
 
     // prettier-ignore
     return ToggleField.new()

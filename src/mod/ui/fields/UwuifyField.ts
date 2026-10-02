@@ -5,11 +5,10 @@ import { Uwuify } from "../../features/Uwuify";
 import { I18n } from "../../i18n/I18n";
 
 export function UwuifyField(): SelectField<Il2Cpp.String> {
-    const valueRef = Config.registerOrGet("uwuifyLevel", Config.uwuifyLevel);
+    const valueRef = Config.getRef("uwuifyLevel");
 
     valueRef.hook(() => {
-        Uwuify.toggleUwuifyMode(Config.uwuifyLevel);
-        return;
+        Uwuify.toggleUwuifyMode();
     });
 
     return SelectField.new<Il2Cpp.String>(System.String)

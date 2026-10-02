@@ -10,7 +10,6 @@ import { Config } from "../data/Config";
  */
 
 // TODO: add a less UwUified mode - hook Sonolus i18n keys only, not ALL text
-// TODO: fix this mess (it relies on config)
 export const UWUIFY_LEVELS = ["off", "owo", "uwu", "uvu", "max"] as const;
 export type UwuLevel = (typeof UWUIFY_LEVELS)[number];
 
@@ -44,8 +43,8 @@ export class Uwuify {
         this.method<void>("set_text", 1).invoke(value);
     }
 
-    static toggleUwuifyMode(level: UwuLevel): void {
-        if (level !== "off") {
+    static toggleUwuifyMode(): void {
+        if (Config.uwuifyLevel !== "off") {
             // Maybe we do not need true here, but then the main menu does not update
             const uiTextObjects = UEObject.findObjectsOfType(this._UIText!.type.object, true);
 
@@ -78,7 +77,7 @@ export class Uwuify {
         return uwuifiedText;
     }
 
-    /* UwUifies a string, keeping Unity tags and URLs untouched */
+    /** UwUifies a string, keeping Unity tags and URLs untouched */
     private static uwuify(sourceText: string, level: UwuLevel, includeSymbols: boolean): string {
         const uwuifiedText = sourceText
             // Keep empty strings, Unity tags and URLs untouched
