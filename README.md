@@ -26,7 +26,8 @@ For announcements and support, join our community on Discord: [SonolusReverse Di
 ## Features
 
 - **Custom Settings Section**
-- **Version Spoof**: Override the version used by the client compatibility checks
+- **Version Spoof**: Override the version used by the client compatibility checks.
+- **UwUify**: Make your game UwUified!
 - **Custom UI BGM**: Change the UI background music to your own!
 
 ##### Planned:
@@ -62,3 +63,4 @@ See the [LICENSE](LICENSE) file for details.
 - [frida-il2cpp-bridge Wiki](https://github.com/vfsfitvnm/frida-il2cpp-bridge/wiki) - Specific API for the IL2CPP used in this project.
 - [fallguys-frida-modmenu](https://github.com/repinek/fallguys-frida-modmenu) - Some Code and architecture adapted from my earlier Frida project.
 - [Gene Brawl](https://github.com/RomashkaTea/genebrawl-public) - Some code and architecture adapted from Gene Brawl.
+- [Untitled Charts](https://github.com/UntitledCharts/uc-sonoserver) - UwUify logic.
