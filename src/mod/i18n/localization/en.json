@@ -7,7 +7,7 @@
         },
         "version_check": {
             "title": "Disable App Version check",
-            "description": "Disables client compatibility check when connecting in custom servers"
+            "description": "Disables the client compatibility check when connecting to custom servers.\n\nMay cause unexpected behaviour, such as preventing replay uploads to custom servers."
         },
         "bgm": {
             "title": "UI BGM",

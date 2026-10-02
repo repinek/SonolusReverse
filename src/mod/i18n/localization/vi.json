@@ -7,7 +7,7 @@
         },
         "version_check": {
             "title": "Tắt tính năng kiểm tra phiên bản (trong Server)",
-            "description": "Vô hiệu hóa khả năng tương thích Server."
+            "description": "Vô hiệu hóa kiểm tra tính tương thích của ứng dụng khi kết nối với máy chủ tùy chỉnh.\n\nCó thể gây ra hành vi không mong muốn, chẳng hạn như không thể gửi replay lên máy chủ tùy chỉnh."
         },
         "uwuify": {
             "title": "UwUify",
