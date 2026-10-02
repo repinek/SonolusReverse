@@ -19,6 +19,17 @@
                 "reset": "Restored UI BGM to default!"
             }
         },
+        "uwuify": {
+            "title": "UwUify",
+            "description": "Choose UwUification level.\n\nPorted from Untitled charts, may cause some unexpected behaviour",
+            "options": {
+                "off": "Off",
+                "owo": "Slightly",
+                "uwu": "A lot",
+                "uvu": "Extreme",
+                "max": "Maximum"
+            }
+        },
         "about": {
             "title": "About SonolusReverse",
             "description": "SonolusReverse - Free and open source client-side modification for Sonolus. Check out our GitHub and leave a star if you like it!\n\nv{0} - {1} ({2})\nSonolus version: {3}",
