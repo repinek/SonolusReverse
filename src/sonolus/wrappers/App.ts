@@ -11,6 +11,11 @@ export class App {
         return (this._class ??= AssemblyHelper.AssemblyCSharp.class("Sonolus.App"));
     }
 
+    /**
+     * Gets Sonolus Version
+     *
+     * You can also use `Il2Cpp.application.version` for getting version
+     */
     static get semVer(): string {
         // get_SemVer is `Sonolus.SemVer`
         return (this._semVer ??= this.class.method<Il2Cpp.Object>("get_SemVer").invoke().method<Il2Cpp.String>("ToString").invoke().content ?? "unknown");
