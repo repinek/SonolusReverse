@@ -9,6 +9,17 @@
             "title": "Tắt tính năng kiểm tra phiên bản (trong Server)",
             "description": "Vô hiệu hóa khả năng tương thích Server."
         },
+        "uwuify": {
+            "title": "UwUify",
+            "description": "Chọn mức độ UwU hóa.\n\nĐược chuyển từ Untitled Charts, có thể gây ra một số hành vi không mong muốn.",
+            "options": {
+                "off": "Tắt",
+                "owo": "Nhẹ",
+                "uwu": "Nhiều",
+                "uvu": "Cực mạnh",
+                "max": "Tối đa"
+            }
+        },
         "bgm": {
             "title": "Nhạc nền giao diện tùy chỉnh",
             "description": "Thay đổi Nhạc nền giao diện ở menu.",
