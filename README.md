@@ -5,7 +5,7 @@
 > If you want to contact me: see [Contact Me](#contact-me)
 
 > [!WARNING]
-> Following a request from the Sonolus developer, certain features **have been removed** from this project.  
+> Following a request from the Sonolus developer, certain [features](https://github.com/repinek/SonolusReverse/pull/12) **have been removed** from this project.  
 > Pre-built APKs are **no longer distributed**.
 
 # SonolusReverse
