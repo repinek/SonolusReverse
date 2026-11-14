@@ -8,7 +8,6 @@ Mostly for developers and me, so I don't forgetting things.
     - DRY
 - [ ] Alert Sonolus System
     - You can see what I'm talking about when auto-exit is configured
-- [ ] Add note for disable version app check
 
 ### Features
 
@@ -28,4 +27,5 @@ Mostly for developers and me, so I don't forgetting things.
 - [ ] Information about your recent plays on map (by replays)
     - Search your all replays in local database and show information about you best play on certain chart
 - [ ] Auto saving replay - I tried to auto clicking these buttons, but game just crashes then
-      also some todos by searching `TODO` in project files
+
+also some todos by searching `TODO` in project files
