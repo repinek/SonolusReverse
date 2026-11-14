@@ -140,7 +140,7 @@ export class I18n {
     // May be unavailable on startup, we are doing lazy initialization in `I18n.t()`
     private static readLocaleFromGame(): string | null {
         try {
-            const ref = this.SettingsUI.method<Ref<Il2Cpp.Object>>("get_UILocalization", 0).invoke(); // Ref<Sonolus.Core.Localization.AvailableLocalization>
+            const ref = this.SettingsUI.method<Ref<Il2Cpp.Object>>("get_Localization", 0).invoke(); // Ref<Sonolus.Core.Localization.AvailableLocalization>
             if (ref.isNull()) return null;
 
             const availableLocalization: Il2Cpp.Object = Object.setPrototypeOf(ref, Ref.prototype).value;
