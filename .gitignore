@@ -5,6 +5,7 @@ node_modules
 # Dumps, Dumps from frida-il2cpp-bridge, APKs
 dump
 app_process64
+com.FosFenes.Sonolus
 # exclude only from root, not from src
 /data/
 
@@ -20,7 +21,7 @@ AGENTS.md
 # Temp
 temp
 
-# Sonolus Wiki, you can obtain one here https://github.com/Sonolus/wiki 
+# Sonolus Wiki, you can obtain one here https://github.com/Sonolus/wiki
 SonolusWiki
 
 # Nix
